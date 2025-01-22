@@ -51,7 +51,7 @@ GT-V2 is an optimized version of the GT-V1, which aims to enhance the modeling c
 
 ## Integration Mechanisms in GT-V2
 
-GT-V2 introduces three integration mechanisms for combining self-attention and cross-attention in the transformer layers.
+GT-V2 introduces three integration mechanisms for combining self-attention and cross-attention.
 
 1. **Weighted integration:** Uses a fixed weight $\alpha$ to balance self-attention and cross-attention.
    
@@ -61,10 +61,9 @@ GT-V2 introduces three integration mechanisms for combining self-attention and c
 
 2. **Gated integration:** Implements a learnable gating mechanism, and uses a sigmoid function to compute dynamic weights.
 
-     \[
-     g = \sigma \left( W_g \cdot \text{Concat}[\text{CrossAttention}(h^{\ell}), \text{SelfAttention}(h^{\ell})] + b_g \right) \\
-     h_k = g \odot \text{CrossAttention}(h^{\ell}) + (1 - g) \odot \text{SelfAttention}(h^{\ell}) \text{.}
-     \]
+   $g = \sigma \left( W_g \cdot \text{Concat}[\text{CrossAttention}(h^{\ell}), \text{SelfAttention}(h^{\ell})] + b_g \right)$,
+   
+   $h_k = g \odot \text{CrossAttention}(h^{\ell}) + (1 - g) \odot \text{SelfAttention}(h^{\ell})$.
 
 3. **Mixed integration:** Learns a linear combination of attention outputs.
    
