@@ -53,30 +53,22 @@ GT-V2 is an optimized version of the GT-V1, which aims to enhance the modeling c
 
 GT-V2 introduces three integration mechanisms for combining self-attention and cross-attention in the transformer layers.
 
-1. **Weighted integration**
-
-   - Uses a fixed weight $\alpha$ to balance self-attention and cross-attention.
+1. **Weighted integration:** Uses a fixed weight $\alpha$ to balance self-attention and cross-attention.
    
-   - Formula: $h_k = \alpha \cdot \text{CrossAttention}(h^{\ell}) + (1 - \alpha) \cdot \text{SelfAttention}(h^{\ell})$.
+   $h_k = \alpha \cdot \text{CrossAttention}(h^{\ell}) + (1 - \alpha) \cdot \text{SelfAttention}(h^{\ell})$.
    
-   - *Three variants tested*: $\alpha = 0.25, 0.5,$ and $0.75$.
+   > *Three variants tested*: $\alpha = 0.25, 0.5,$ and $0.75$.
 
-2. **Gated integration**
+2. **Gated integration:** Implements a learnable gating mechanism, and uses a sigmoid function to compute dynamic weights.
 
-   - Implements a learnable gating mechanism, and uses a sigmoid function to compute dynamic weights.
-
-   - Formula:
-
-     $$
+     \[
      g = \sigma \left( W_g \cdot \text{Concat}[\text{CrossAttention}(h^{\ell}), \text{SelfAttention}(h^{\ell})] + b_g \right) \\
      h_k = g \odot \text{CrossAttention}(h^{\ell}) + (1 - g) \odot \text{SelfAttention}(h^{\ell}) \text{.}
-     $$
+     \]
 
-3. **Mixed integration**
-
-   - Learns a linear combination of attention outputs.
+3. **Mixed integration:** Learns a linear combination of attention outputs.
    
-   - Formula: $h_k = W_m \cdot \text{Concat}[\text{CrossAttention}(h^{\ell}), \text{SelfAttention}(h^{\ell})] + b_m$.
+   $h_k = W_m \cdot \text{Concat}[\text{CrossAttention}(h^{\ell}), \text{SelfAttention}(h^{\ell})] + b_m$.
 
 
 
