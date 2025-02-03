@@ -200,7 +200,6 @@ def from_pymol_to_smile(pymol, atom_dict, bond_dict, remove_aromatic=False):
                 if bond_stg=='TRIPLE':
                     mol.AddBond(i, j, Chem.rdchem.BondType.TRIPLE)
                 if bond_stg=='AROMATIC':
-                    #print('ISSUE: MUST BE NO AROMATIC BONDS !!!!')
                     mol.AddBond(i, j, Chem.rdchem.BondType.AROMATIC)
     smile = from_mol_to_smile(mol,remove_aromatic)
     return smile
