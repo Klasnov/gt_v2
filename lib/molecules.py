@@ -4,6 +4,7 @@ import torch
 import time
 import pickle
 import dgl
+from rdkit import Chem
 
 
 # class of atom and bond dictionaries
@@ -157,8 +158,49 @@ def compute_ncut(Adj, R):
     C = torch.tensor(res-1).long()
     return C
 
+# from pytorch to smile molecule 
+def from_mol_to_smile(mol, remove_aromatic=False):
+    if remove_aromatic==True:
+        Chem.Kekulize(mol, clearAromaticFlags=True) # remove aromatic bonds
+    smile = Chem.MolToSmiles(mol)
+    return smile
 
 
+def symbol2atom(aug_symb):
+    mylist=aug_symb.split()
+    atom = Chem.Atom(mylist[0])
+    if '+' in mylist:
+        atom.SetFormalCharge(1)
+    if '-' in mylist:
+        atom.SetFormalCharge(-1)
+    if 'H1' in mylist:
+        atom.SetNumExplicitHs(1)   
+    if 'H2' in mylist:
+        atom.SetNumExplicitHs(2)    
+    if 'H3' in mylist:
+        atom.SetNumExplicitHs(3)
+    return atom
+    
 
-
-
+def from_pymol_to_smile(pymol, atom_dict, bond_dict, remove_aromatic=False):
+    N = pymol.num_atom 
+    mol = Chem.RWMol()
+    for tp in pymol.atom_type:
+        symbol = atom_dict.idx2word[ tp.item() ]
+        mol.AddAtom( symbol2atom(symbol) )
+    for i in range(0,N): 
+        for j in range(i+1,N): 
+            tp = pymol.bond_type[i,j].item()
+            bond_stg = bond_dict.idx2word[tp]
+            if bond_stg!='NONE':
+                if bond_stg=='SINGLE':
+                    mol.AddBond(i, j, Chem.rdchem.BondType.SINGLE)
+                if bond_stg=='DOUBLE':
+                    mol.AddBond(i, j, Chem.rdchem.BondType.DOUBLE)
+                if bond_stg=='TRIPLE':
+                    mol.AddBond(i, j, Chem.rdchem.BondType.TRIPLE)
+                if bond_stg=='AROMATIC':
+                    #print('ISSUE: MUST BE NO AROMATIC BONDS !!!!')
+                    mol.AddBond(i, j, Chem.rdchem.BondType.AROMATIC)
+    smile = from_mol_to_smile(mol,remove_aromatic)
+    return smile
